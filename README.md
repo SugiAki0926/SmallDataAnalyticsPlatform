@@ -49,6 +49,7 @@ flowchart TB
 flowchart LR
   subgraph MacLate["Mac（開発）"]
     DC_I2["ingestion Dev Container<br/>コード編集・単体実行"]
+    DC_L2["dlt Dev Container<br/>コード編集・単体実行"]
     DC_D2["dbt Dev Container<br/>コード編集・単体実行"]
     DC_A2["airflow Dev Container<br/>DAG編集"]
     AF_M["Airflow 3<br/>検証用起動"]
@@ -57,6 +58,7 @@ flowchart LR
     DBT_M["dap-dbt 一時Container"]
     PG2["開発用 PostgreSQL ×1"]
     DC_I2 --- PG2
+    DC_L2 --- PG2
     DC_D2 --- PG2
     DC_A2 --- PG2
     AF_M -->|"DockerOperator"| ENG_M
