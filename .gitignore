@@ -1,2 +1,64 @@
+# --- このリポジトリ固有 ---
 .cursor/
 docs/
+
+# --- 秘密情報 ---
+.env
+.env.*
+!.env.example
+**/*.pem
+**/*.key
+secrets/
+credentials.json
+service-account*.json
+
+# --- Python / uv ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.ipynb_checkpoints/
+
+# --- dlt ---
+.dlt/
+
+# --- dbt ---
+target/
+dbt_packages/
+logs/
+**/profiles.yml
+
+# --- Airflow ---
+airflow/logs/
+**/airflow.cfg.bak
+airflow.db
+airflow-webserver.pid
+standalone_admin_password.txt
+simple_auth_manager_passwords.json.generated
+
+# --- Docker / ローカル永続 ---
+*.log
+docker-data/
+postgres-data/
+pgdata/
+
+# --- macOS / エディタ ---
+.DS_Store
+.AppleDouble
+.LSOverride
+.idea/
+*.swp
+*.swo
+*~
