@@ -1,0 +1,25 @@
+version: 2
+models:
+  - name: stg_air_pollution
+    columns:
+      - name: air_pollution_id
+        tests:
+          - unique
+          - not_null
+      - name: city_id
+        tests:
+          - not_null
+      - name: air_pollution_at
+      - name: created_at
+      - name: updated_at
+      - name: air_quality_index
+        tests:
+          - not_null
+      - name: carbon_monoxide
+      - name: nitrogen_monoxide
+      - name: nitrogen_dioxide
+      - name: ozone
+      - name: sulphur_dioxide
+      - name: fine_particulate_matter
+      - name: coarse_particulate_matter
+      - name: ammonia

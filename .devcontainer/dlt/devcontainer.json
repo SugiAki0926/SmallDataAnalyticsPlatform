@@ -1,0 +1,8 @@
+{
+  "name": "dap-dlt",
+  "dockerComposeFile": "compose.yml",
+  "service": "dlt",
+  "workspaceFolder": "/workspaces/SmallDataAnalyticsPlatform",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "bash .devcontainer/dlt/post-create.sh"
+}

@@ -1,0 +1,15 @@
+version: 2
+models:
+  - name: stg_locations
+    columns:
+      - name: city_id
+        tests:
+          - unique
+          - not_null
+      - name: city_name_en
+      - name: city_name_ja
+      - name: country_code
+      - name: city_latitude
+      - name: city_longitude
+      - name: created_at
+      - name: updated_at

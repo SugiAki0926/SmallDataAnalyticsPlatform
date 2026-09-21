@@ -1,0 +1,15 @@
+{
+  "name": "dap-dbt",
+  "dockerComposeFile": "compose.yml",
+  "service": "dbt",
+  "workspaceFolder": "/workspaces/SmallDataAnalyticsPlatform",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "bash .devcontainer/dbt/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "innoverio.vscode-dbt-power-user"
+      ]
+    }
+  }
+}

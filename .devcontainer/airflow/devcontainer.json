@@ -1,0 +1,8 @@
+{
+  "name": "dap-airflow",
+  "dockerComposeFile": "compose.yml",
+  "service": "airflow",
+  "workspaceFolder": "/workspaces/SmallDataAnalyticsPlatform",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "bash .devcontainer/airflow/post-create.sh"
+}

@@ -1,0 +1,31 @@
+version: 2
+models:
+  - name: stg_current_weather
+    columns:
+      - name: current_weather_id
+        tests:
+          - unique
+          - not_null
+      - name: city_id
+      - name: current_weather_at
+      - name: created_at
+      - name: updated_at
+      - name: weather_id
+      - name: weather_name
+      - name: weather_description
+      - name: weather_icon
+      - name: temperature_celsius
+      - name: feels_like_temperature_celsius
+      - name: minimum_temperature_celsius
+      - name: maximum_temperature_celsius
+      - name: atmospheric_pressure
+      - name: humidity_percentage
+      - name: sea_level_pressure
+      - name: ground_level_pressure
+      - name: visibility_distance
+      - name: wind_speed
+      - name: wind_direction
+      - name: wind_gust
+      - name: cloud_coverage_percentage
+      - name: sunrise_at
+      - name: sunset_at

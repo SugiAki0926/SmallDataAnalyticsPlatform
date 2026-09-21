@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: int_air_pollution
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+      - name: city_name_en
+      - name: air_pollution_at
+        tests:
+          - not_null
+      - name: carbon_monoxide
+      - name: nitrogen_monoxide
+      - name: nitrogen_dioxide
+      - name: ozone
+      - name: sulphur_dioxide
+      - name: fine_particulate_matter
+      - name: coarse_particulate_matter
+      - name: ammonia

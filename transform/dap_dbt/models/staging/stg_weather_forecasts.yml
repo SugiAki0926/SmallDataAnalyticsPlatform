@@ -1,0 +1,33 @@
+version: 2
+models:
+  - name: stg_weather_forecasts
+    columns:
+      - name: weather_forecast_id
+        tests:
+          - unique
+          - not_null
+      - name: city_id
+        tests:
+          - not_null
+      - name: forecast_at
+      - name: created_at
+      - name: updated_at
+      - name: temperature_celsius
+      - name: feels_like_temperature_celsius
+      - name: minimum_temperature_celsius
+      - name: maximum_temperature_celsius
+      - name: atmospheric_pressure
+      - name: sea_level_pressure
+      - name: ground_level_pressure
+      - name: humidity_percentage
+      - name: weather_id
+      - name: weather_name
+      - name: weather_description
+      - name: weather_icon
+      - name: cloud_coverage_percentage
+      - name: wind_speed
+      - name: wind_direction
+      - name: wind_gust
+      - name: visibility_distance
+      - name: precipitation_probability
+      - name: part_of_day

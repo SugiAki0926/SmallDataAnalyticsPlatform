@@ -1,0 +1,11 @@
+[project]
+name = "dap-airflow"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "apache-airflow>=3.0",
+    "apache-airflow-providers-docker",
+    "psycopg2-binary>=2.9",
+    "asyncpg>=0.30",
+    "pendulum>=3.2.0",
+]

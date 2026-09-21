@@ -1,0 +1,85 @@
+# --- このリポジトリ固有 ---
+.cursor/
+/docs/
+
+# --- 秘密情報 ---
+.env
+.env.*
+!.env.example
+!.env*.example
+.envrc
+.pgpass
+**/.pgpass
+.netrc
+**/*.pem
+**/*.key
+secrets/
+secrets.toml
+credentials.json
+service-account*.json
+
+# --- Python / uv ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.cache/
+.ipynb_checkpoints/
+
+# --- dlt ---
+.dlt/
+
+# --- dbt ---
+target/
+dbt_packages/
+dbt_internal_packages/
+logs/
+.user.yml
+
+# --- Airflow ---
+airflow/logs/
+airflow.cfg
+**/airflow.cfg.bak
+airflow/webserver_config.py
+airflow.db
+*.pid
+standalone_admin_password.txt
+simple_auth_manager_passwords.json
+simple_auth_manager_passwords.json.generated
+airflow/dags/docker_hello.py
+airflow/dags/hello.py
+
+
+# --- Docker / ローカル永続 ---
+*.log
+docker-data/
+postgres-data/
+pgdata/
+compose.override.yml
+docker-compose.override.yml
+
+# --- OS / エディタ / 一時ファイル ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+.idea/
+*.swp
+*.swo
+*~
+*.bak
+*.tmp

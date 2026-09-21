@@ -1,0 +1,87 @@
+{
+    "_state_version": 6,
+    "_state_engine_version": 4,
+    "_local": {
+        "first_run": false,
+        "_dev_mode": false,
+        "initial_cwd": "/workspaces/SmallDataAnalyticsPlatform/extract_and_load",
+        "last_run_context": {
+            "settings_dir": "/workspaces/SmallDataAnalyticsPlatform/extract_and_load/.dlt",
+            "local_dir": "/workspaces/SmallDataAnalyticsPlatform/extract_and_load",
+            "run_dir": "/workspaces/SmallDataAnalyticsPlatform/extract_and_load",
+            "uri": "file:///workspaces/SmallDataAnalyticsPlatform/extract_and_load"
+        },
+        "_last_extracted_at": "2026-09-20T01:51:22.145657+00:00",
+        "_last_extracted_hash": "jafvxIrEUp/SGhDhuptq6f7hQOS7WbwEeKGluFD8Dp0="
+    },
+    "default_schema_name": "sql_database",
+    "dataset_name": "raw",
+    "schema_names": [
+        "sql_database"
+    ],
+    "pipeline_name": "source_to_analytics",
+    "destination_type": "dlt.destinations.postgres",
+    "destination_name": null,
+    "_version_hash": "jafvxIrEUp/SGhDhuptq6f7hQOS7WbwEeKGluFD8Dp0=",
+    "sources": {
+        "sql_database": {
+            "resources": {
+                "air_pollution": {
+                    "incremental": {
+                        "updated_at": {
+                            "initial_value": null,
+                            "last_value": "2026-09-20T01:43:00.448959+00:00",
+                            "unique_hashes": [
+                                "xdTgU/8A/2Ise4zwgUcU"
+                            ],
+                            "start_value": "2026-09-19T08:42:24.143994+00:00"
+                        }
+                    }
+                },
+                "weather_forecasts": {
+                    "incremental": {
+                        "updated_at": {
+                            "initial_value": null,
+                            "last_value": "2026-09-20T01:43:00.448959+00:00",
+                            "unique_hashes": [
+                                "Usyr6Coe+u7+IpCu0ZIh",
+                                "NFfGTEF34gsADCTbVFqo",
+                                "7dK6PrZKBKC5E62savsq",
+                                "xIORBdfx6/y0L+OFDpy3",
+                                "u6RQ8qyZLY8GSP/TRe8H",
+                                "vVhbEc3Q14/TEbTGislL",
+                                "5CEL+COcZMYcpl3Ktg2e",
+                                "zP0gOb6aHKaORrSvTdkx"
+                            ],
+                            "start_value": "2026-09-19T08:42:24.143994+00:00"
+                        }
+                    }
+                },
+                "current_weather": {
+                    "incremental": {
+                        "updated_at": {
+                            "initial_value": null,
+                            "last_value": "2026-09-20T01:43:00.448959+00:00",
+                            "unique_hashes": [
+                                "xdTgU/8A/2Ise4zwgUcU"
+                            ],
+                            "start_value": "2026-09-19T08:42:24.143994+00:00"
+                        }
+                    }
+                },
+                "locations": {
+                    "incremental": {
+                        "updated_at": {
+                            "initial_value": null,
+                            "last_value": "2026-09-20T01:43:00.448959+00:00",
+                            "unique_hashes": [
+                                "tfkVSWCRlW95g4QRKTMe"
+                            ],
+                            "start_value": "2026-09-19T08:42:24.143994+00:00"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

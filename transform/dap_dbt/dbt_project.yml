@@ -1,0 +1,38 @@
+name: 'dap_dbt'
+version: '1.0.0'
+config-version: 2
+
+profile: 'dap_dbt'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  dap_dbt:
+    staging:
+      +schema: staging
+      +materialized: view
+
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+
+    marts:
+      +schema: marts
+      +materialized: table
+
+seeds:
+  dap_dbt:
+    +schema: seed
+
+snapshots:
+  dap_dbt:
+    +schema: snapshots

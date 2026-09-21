@@ -1,0 +1,16 @@
+[project]
+name = "extract-and-load"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "dlt[postgres,sql-database]",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

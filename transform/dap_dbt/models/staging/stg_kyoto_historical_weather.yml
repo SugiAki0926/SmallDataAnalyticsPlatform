@@ -1,0 +1,20 @@
+version: 2
+models:
+  - name: stg_kyoto_historical_weather
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+      - name: year
+      - name: jan
+      - name: feb
+      - name: mar
+      - name: apr
+      - name: may
+      - name: jun
+      - name: jul
+      - name: aug
+      - name: sep
+      - name: oct
+      - name: nov
+      - name: dec

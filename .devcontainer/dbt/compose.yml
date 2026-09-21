@@ -1,0 +1,23 @@
+# PostgreSQL 用 compose.dev.yml とは別。dap-dev は作らず、既存に参加する。
+services:
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dap-dbt
+    working_dir: /workspaces/SmallDataAnalyticsPlatform
+    volumes:
+      - ../..:/workspaces/SmallDataAnalyticsPlatform
+    env_file:
+      - ../../.env
+    environment:
+      TZ: ${TZ:-Asia/Tokyo}
+      # profiles.yml は transform/dap_dbt/profile/。cwd に依存しないよう絶対パスにする。
+      DBT_PROFILES_DIR: /workspaces/SmallDataAnalyticsPlatform/transform/dap_dbt/profile
+    command: sleep infinity
+    networks:
+      - dap-dev
+
+networks:
+  dap-dev:
+    external: true

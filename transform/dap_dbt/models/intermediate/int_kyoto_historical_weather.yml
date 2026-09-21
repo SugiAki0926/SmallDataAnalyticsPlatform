@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: int_kyoto_historical_weather
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+      - name: year
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+      - name: year_month
+        tests:
+          - not_null
+      - name: temperature_celsius
+        tests:
+          - not_null

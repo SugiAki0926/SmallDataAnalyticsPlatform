@@ -1,0 +1,27 @@
+version: 2
+models:
+  - name: int_weather_forecasts
+    columns:
+      - name: weather_forecast_id
+        tests:
+          - unique
+          - not_null
+      - name: city_id
+        tests:
+          - not_null
+      - name: city_name_en
+      - name: forecast_at
+        tests:
+          - not_null
+      - name: weather_name
+      - name: weather_description
+      - name: temperature_celsius
+      - name: feels_like_temperature_celsius
+      - name: minimum_temperature_celsius
+      - name: maximum_temperature_celsius
+      - name: humidity_percentage
+      - name: wind_speed
+      - name: wind_direction
+      - name: precipitation_probability
+      - name: part_of_day
+      - name: cloud_coverage_percentage

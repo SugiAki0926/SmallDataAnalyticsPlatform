@@ -1,0 +1,8 @@
+{
+  "name": "dap-ingestion",
+  "dockerComposeFile": "compose.yml",
+  "service": "ingestion",
+  "workspaceFolder": "/workspaces/SmallDataAnalyticsPlatform",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "bash .devcontainer/ingestion/post-create.sh"
+}
