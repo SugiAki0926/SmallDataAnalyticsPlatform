@@ -1,3 +1,4 @@
+# Airflowの各コンテナの共通設定(top level)
 x-airflow-common: &airflow-common
   build:
     context: ./airflow
@@ -10,22 +11,22 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
     AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
-    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET:-dap-dev-jwt-secret-change-me}
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET}
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: ${AIRFLOW__CORE__EXECUTION_API_SERVER_URL:-http://airflow-api-server:8080/execution/}
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
-    DBT_TARGET: ${DBT_TARGET:-dev}
+    DAP_DOCKER_NETWORK: dap-prod # dap-dlt, dap-dbtがPostgreSQLとコンテナ間通信するために必要
+    DBT_TARGET: prod
   volumes:
-    - ./airflow/dags:/opt/airflow/dags
-    - ./airflow/logs:/opt/airflow/logs
+    - dap_prod_airflow_logs:/opt/airflow/logs
   networks:
-    - dap-dev
+    - dap-prod
 
 services:
   postgres:
     image: postgres:16
-    container_name: dap-postgres
+    container_name: dap-prod-postgres
     restart: unless-stopped
     environment:
       TZ: ${TZ:-Asia/Tokyo}
@@ -44,14 +45,13 @@ services:
       AIRFLOW_DB_USER: ${AIRFLOW_DB_USER}
       AIRFLOW_DB_PASSWORD: ${AIRFLOW_DB_PASSWORD}
     command: [ "postgres", "-c", "timezone=${TZ:-Asia/Tokyo}" ]
-    ports:
-      - "${POSTGRES_PUBLISH_PORT:-15432}:5432"
     volumes:
-      - dap_postgres_data:/var/lib/postgresql/data
+      - dap_prod_postgres_data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
-      - dap-dev
+      - dap-prod
     healthcheck:
+      # $POSTGRES_USERとして展開させるために$$を使用
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 5s
       timeout: 5s
@@ -59,7 +59,7 @@ services:
 
   airflow-init:
     <<: *airflow-common
-    container_name: dap-airflow-init
+    container_name: dap-prod-airflow-init
     command: [ "airflow", "db", "migrate" ]
     restart: "no"
     depends_on:
@@ -68,7 +68,7 @@ services:
 
   airflow-api-server:
     <<: *airflow-common
-    container_name: dap-airflow-api-server
+    container_name: dap-prod-airflow-api-server
     command: [ "airflow", "api-server", "--host", "0.0.0.0", "--port", "8080" ]
     ports:
       - "8080:8080"
@@ -78,38 +78,26 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
-    healthcheck:
-      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/v2/monitor/health')" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
 
   airflow-scheduler:
     <<: *airflow-common
-    container_name: dap-airflow-scheduler
+    container_name: dap-prod-airflow-scheduler
     command: [ "airflow", "scheduler" ]
     restart: unless-stopped
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      # Linuxでは　/var/run/docker.sockなので注意
-      - ${HOME}/.docker/run/docker.sock:/var/run/docker.sock
+      # socket 用に volumesを書いたので共通設定が反映されないため記載。
+      - dap_prod_airflow_logs:/opt/airflow/logs
+      # Schedulerコンテナ内のDockerOperatorがHost Docker Engineと通信するために必要
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       postgres:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
-    healthcheck:
-      test: [ "CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"' ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
 
   airflow-dag-processor:
     <<: *airflow-common
-    container_name: dap-airflow-dag-processor
+    container_name: dap-prod-airflow-dag-processor
     command: [ "airflow", "dag-processor" ]
     restart: unless-stopped
     depends_on:
@@ -117,16 +105,35 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
-    healthcheck:
-      test: [ "CMD-SHELL", 'airflow jobs check --job-type DagProcessorJob --hostname "$${HOSTNAME}"' ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
+
+  # 単発ジョブ用のコンテナ(OpenWeather API → Source DB)
+  source-ingestion:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile
+    image: dap-source-ingestion:latest
+    profiles:
+      - job
+    env_file:
+      - .env
+    environment:
+      TZ: ${TZ:-Asia/Tokyo}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      SOURCE_DB: ${SOURCE_DB}
+      SOURCE_DB_USER: ${SOURCE_DB_USER}
+      SOURCE_DB_PASSWORD: ${SOURCE_DB_PASSWORD}
+    networks:
+      - dap-prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
 
 volumes:
-  dap_postgres_data:
+  dap_prod_postgres_data:
+  dap_prod_airflow_logs:
 
 networks:
-  dap-dev:
-    name: dap-dev
+  dap-prod:
+    name: dap-prod

@@ -15,6 +15,6 @@ ENV AIRFLOW_HOME=/opt/airflow
 ENV PATH="/opt/airflow/.venv/bin:${PATH}"
 ENV PYTHONUNBUFFERED=1
 
-COPY pyproject.toml uv.lock ./
-COPY dags/ ./dags/
+COPY ./pyproject.toml ./uv.lock ./
+COPY ./dags/ ./dags/
 RUN uv sync --frozen --no-dev

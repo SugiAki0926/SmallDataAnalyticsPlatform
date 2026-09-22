@@ -22,8 +22,8 @@ GRANT CONNECT ON DATABASE ${ANALYTICS_DB} TO ${DLT_DB_USER};
 GRANT CONNECT ON DATABASE ${ANALYTICS_DB} TO ${DBT_DB_USER};
 GRANT CONNECT ON DATABASE ${AIRFLOW_DB} TO ${AIRFLOW_DB_USER};
 
--- dlt merge は dataset 用に raw_staging 等の schema を新規作成するため
+-- [EL]dlt merge は dataset 用に raw の schema 権限が必要
 GRANT CREATE ON DATABASE ${ANALYTICS_DB} TO ${DLT_DB_USER};
--- dbt --target dev は dev_staging 等のサンドボックス schema を新規作成するため
+-- [ T]dbt --target {dev/prod} は {dev/prod}_staging などの schema を新規作成するために必要
 GRANT CREATE ON DATABASE ${ANALYTICS_DB} TO ${DBT_DB_USER};
 EOSQL

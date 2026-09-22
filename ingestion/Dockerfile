@@ -13,8 +13,8 @@ WORKDIR /opt/ingestion
 ENV PATH="/opt/ingestion/.venv/bin:${PATH}"
 ENV PYTHONUNBUFFERED=1
 
-COPY pyproject.toml uv.lock ./
+COPY ./pyproject.toml ./uv.lock ./
 RUN uv sync --frozen --no-dev
-COPY main.py fetch_weather.py parser_weather.py ingestion_weather.py ./
+COPY ./main.py ./fetch_weather.py ./parser_weather.py ./ingestion_weather.py ./
 
 CMD ["python", "main.py"]

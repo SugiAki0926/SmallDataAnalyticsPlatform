@@ -14,8 +14,8 @@ ENV PATH="/opt/dap_dbt/.venv/bin:${PATH}"
 ENV PYTHONUNBUFFERED=1
 ENV DBT_PROFILES_DIR=/opt/dap_dbt/profile
 
-COPY pyproject.toml uv.lock ./
+COPY ./pyproject.toml ./uv.lock ./
 RUN uv sync --frozen --no-dev
-COPY . .
+COPY ./ ./
 
 CMD ["dbt", "build", "--target", "prod"]

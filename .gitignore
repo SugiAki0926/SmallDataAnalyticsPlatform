@@ -1,7 +1,7 @@
 # --- このリポジトリ固有 ---
 .cursor/
 /docs/
-
+sdap.excalidraw
 # --- 秘密情報 ---
 .env
 .env.*
