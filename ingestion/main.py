@@ -12,19 +12,19 @@ def run() -> None:
     city_query = fetch_weather._require_env("OPENWEATHER_CITY_QUERY")
     forecast_cnt = int(fetch_weather.os.environ.get("OPENWEATHER_FORECAST_CNT", "8"))
 
-    # Locations
+    # Locations Data
     geo = fetch_weather.fetch_geo(api_key, city_query)
     geo_df = parser_weather.with_city_id(parser_weather.parse_geo(geo), city_id)
 
-    # Current weather
+    # Current weather Data
     current_weather = fetch_weather.fetch_current_weather(base_url, api_key, city_id)
     weather_df = parser_weather.with_city_id(parser_weather.parse_current_weather(current_weather), city_id)
 
-    # Forecast
+    # Forecast Data
     forecast = fetch_weather.fetch_forecast(base_url, api_key, city_id, forecast_cnt)
     forecast_df = parser_weather.with_city_id(parser_weather.parse_forecast(forecast), city_id)
 
-    # Air pollution
+    # Air pollution Data
     air_pollution = fetch_weather.fetch_air_pollution(base_url, api_key, city_query, geo=geo)
     air_pollution_df = parser_weather.with_city_id(parser_weather.parse_air_pollution(air_pollution), city_id)
 

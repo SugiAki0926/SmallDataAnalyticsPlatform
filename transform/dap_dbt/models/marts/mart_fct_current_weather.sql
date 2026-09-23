@@ -75,14 +75,8 @@ select
     maximum_temperature_celsius,
     humidity_percentage,
     wind_speed,
-    carbon_monoxide,
-    nitrogen_monoxide,
-    nitrogen_dioxide,
-    ozone,
-    sulphur_dioxide,
     fine_particulate_matter,
-    coarse_particulate_matter,
-    ammonia
+    coarse_particulate_matter
 from
     current_weather_hourly as cwh
 left join

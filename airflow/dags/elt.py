@@ -17,7 +17,7 @@ _PG = {
 
 
 # 失敗コンテナは auto_remove="success" で残る。
-# 固定名だとリトライ時に衝突するため、実行時刻（マイクロ秒）で一意にする。
+# 固定名だとリトライ時に衝突するため、実行時刻（マイクロ秒）で一意に設定。
 _CONTAINER_NAME_SUFFIX = "{{ macros.datetime.utcnow().strftime('%Y%m%dT%H%M%S%f') }}"
 
 

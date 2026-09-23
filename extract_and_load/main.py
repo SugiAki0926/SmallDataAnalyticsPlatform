@@ -64,7 +64,6 @@ def build_pipeline(
 
 
 def run():
-    """Source DB → Analytics raw の EL を1回実行する。"""
     pipeline = build_pipeline(pipeline_name="source_to_analytics", dataset_name="raw")
     load_info = pipeline.run(build_source())
     print(load_info)
