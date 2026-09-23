@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 import fetch_weather
 import ingestion_weather
@@ -35,7 +36,7 @@ def run() -> None:
         forecast_df=forecast_df,
         air_pollution_df=air_pollution_df,
     )
-    print("Inserted successfully")
+    print(f"Inserted successfully: {datetime.now().astimezone().isoformat(timespec='seconds')}")
 
 
 if __name__ == "__main__":
