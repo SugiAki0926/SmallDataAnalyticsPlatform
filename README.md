@@ -34,11 +34,14 @@ docker logs dap-prod-postgres
 cat /home/raspy/source-ingestion.log
 ```
 
-各コンテナが正常に起動した後は、初回￥cronへの
+各コンテナが正常に起動した後は、初回のみcronへのOpenWeather から Source DB への取り込みを設定します。
+そして、AirflowのUI画面から `elt` をONに変更します。起動時はOFFで設定しているため。
 
-
-
-OpenWeather から Source DB への取り込みは、`raspy` の crontab です。毎時 0 分（JST）に実行し、ELT の DAG は毎時 5 分です。
-```bash
-crontab -l
 ```
+crontab -l
+0 * * * * cd /opt/SmallDataAnalyticsPlatform && /usr/bin/docker compose -f compose.prod.yml run --rm source-ingestion >> /home/raspy/source-ingestion.log 2>&1
+```
+
+毎時 0 分（JST）に天気データを取得し、ELT の DAG は毎時 5 分に実行されます。
+
+
