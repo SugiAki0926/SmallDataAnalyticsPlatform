@@ -4,6 +4,7 @@ import sys
 import dlt
 from dlt.sources.sql_database import sql_database
 
+# extractする対象テーブル
 TABLES = (
     "locations",
     "current_weather",

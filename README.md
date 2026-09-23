@@ -8,31 +8,37 @@ Docker / Dev Containers で各コンポーネントを分離し、手元で確�
 
 ## データパイプラインとアーキテクチャ
 
-実行する環境がRaspberryPiということもあり、1つのPostgreSQLで3つのデータベースを管理している。
-また、Ingestionの部分は、日々、データが蓄積される基幹システムを模しているため、Airflowでは管理していない。
+実行する環境がRaspberryPiということもあり、1つのPostgreSQLで3つのデータベースを管理しています。
+また、Ingestionの部分は、日々、データが蓄積される基幹システムを模しているため、Airflowでは管理していません。
 
 ![Small Data Analytics Platform](sdap.png)
 
-## コマンド
+本プロジェクトは、データ分析基盤の仕組みを「小さく作って理解する」ことを目的とした学習用です。そのため、セキュリティや監視、詳細なログなど本番運用で必須となる機能は、簡易的な実装のみです。
 
+## 本番運用
+
+### 起動と停止
+
+基本的には、起動は **main への merge → GitHub Actions の runner → `deploy.sh`** です。
+Githubリポジトリへのシークレットの登録が必要です。ただ、手元のローカルPCで開発するには必須ではありません。
+変更は PR を merge し、次の deploy で反映します。
+
+```bash
+cd /opt/SmallDataAnalyticsPlatform
+docker compose -f compose.prod.yml up -d
+docker compose -f compose.prod.yml stop
+
+# log
+docker logs dap-prod-airflow-scheduler
+docker logs dap-prod-postgres
+cat /home/raspy/source-ingestion.log
 ```
-# 常駐コンテナ起動
-docker compose -f compose.dev.yml up -d
-docker build -t dap-source-ingestion:latest ./ingestion
-docker build -t dap-dlt:latest ./extract_and_load
-docker build -t dap-dbt:latest ./transform/dap_dbt
 
-# Sourceへ1回インサート
-docker run --rm --network dap-dev --env-file .env dap-source-ingestion:latest
+各コンテナが正常に起動した後は、初回￥cronへの
 
-# ELTを1回実行
-docker exec dap-airflow-scheduler airflow dags unpause elt
-docker exec dap-airflow-scheduler airflow dags trigger elt
 
-# Martまでデータが届いているか
-docker exec -it dap-postgres psql -U dap -d analytics -c "
-SELECT city_name_en, current_weather_hour, temperature_celsius FROM dev_marts.mart_fct_current_weather
-ORDER BY current_weather_hour DESC
-LIMIT 5;
-"
+
+OpenWeather から Source DB への取り込みは、`raspy` の crontab です。毎時 0 分（JST）に実行し、ELT の DAG は毎時 5 分です。
+```bash
+crontab -l
 ```
