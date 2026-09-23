@@ -18,6 +18,19 @@ x-airflow-common: &airflow-common
   networks:
     - dap-prod
 
+# elt.py は import 時に os.environ を読む（dag-processor と scheduler のタスク起動時）
+x-airflow-elt-env: &airflow-elt-env
+  DAP_DOCKER_NETWORK: dap-prod # dlt / dbt コンテナが PostgreSQL と通信するため
+  DBT_TARGET: prod
+  POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  ANALYTICS_DB: ${ANALYTICS_DB}
+  SOURCE_DB: ${SOURCE_DB}
+  DLT_DB_USER: ${DLT_DB_USER}
+  DLT_DB_PASSWORD: ${DLT_DB_PASSWORD}
+  DBT_DB_USER: ${DBT_DB_USER}
+  DBT_DB_PASSWORD: ${DBT_DB_PASSWORD}
+
 services:
   postgres:
     image: postgres:16
@@ -88,6 +101,8 @@ services:
     container_name: dap-prod-airflow-scheduler
     command: [ "airflow", "scheduler" ]
     restart: unless-stopped
+    environment:
+      <<: [*airflow-env, *airflow-elt-env]
     volumes:
       # socket 用に volumesを書いたので共通設定が反映されないため記載。
       - dap_prod_airflow_logs:/opt/airflow/logs
@@ -104,19 +119,8 @@ services:
     container_name: dap-prod-airflow-dag-processor
     command: [ "airflow", "dag-processor" ]
     restart: unless-stopped
-    # elt.py はパース時に os.environ を読む。パースするのはこのコンテナだけ。
     environment:
-      <<: *airflow-env
-      DAP_DOCKER_NETWORK: dap-prod # dlt / dbt コンテナが PostgreSQL と通信するため
-      DBT_TARGET: prod
-      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
-      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-      ANALYTICS_DB: ${ANALYTICS_DB}
-      SOURCE_DB: ${SOURCE_DB}
-      DLT_DB_USER: ${DLT_DB_USER}
-      DLT_DB_PASSWORD: ${DLT_DB_PASSWORD}
-      DBT_DB_USER: ${DBT_DB_USER}
-      DBT_DB_PASSWORD: ${DBT_DB_PASSWORD}
+      <<: [*airflow-env, *airflow-elt-env]
     depends_on:
       postgres:
         condition: service_healthy
