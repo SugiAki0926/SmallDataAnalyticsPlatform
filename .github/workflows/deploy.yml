@@ -1,0 +1,24 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: prod / deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Pi
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PI_HOST }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.PI_SSH_KEY }}
+          port: ${{ secrets.PI_SSH_PORT }}
+          script_stop: true
+          script: |
+            cd /opt/SmallDataAnalyticsPlatform
+            git pull origin main
+            bash deploy.sh
