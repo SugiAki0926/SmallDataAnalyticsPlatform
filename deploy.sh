@@ -12,6 +12,6 @@ docker build -t dap-dlt:latest extract_and_load
 docker build -t dap-dbt:latest transform/dap_dbt
 docker build -t dap-airflow:latest airflow
 
-docker compose -f compose.prod.yml up -d --no-build
+docker compose -f compose.prod.yml up -d
 
 echo "deployed $(git rev-parse HEAD)"
