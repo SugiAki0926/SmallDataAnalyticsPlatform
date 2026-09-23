@@ -5,7 +5,7 @@ x-airflow-common: &airflow-common
   image: dap-airflow:latest
   env_file:
     - .env
-  environment:
+  environment: &airflow-env
     TZ: ${TZ:-Asia/Tokyo}
     AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
@@ -14,7 +14,6 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: ${AIRFLOW__CORE__EXECUTION_API_SERVER_URL:-http://airflow-api-server:8080/execution/}
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
-    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
     DBT_TARGET: ${DBT_TARGET:-dev}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
@@ -73,6 +72,14 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    environment:
+      <<: *airflow-env
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: ${AIRFLOW_UI_USER}:admin
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_PASSWORDS_FILE: /opt/airflow/simple_auth_manager_passwords.json
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./secrets/airflow_ui_passwords.json:/opt/airflow/simple_auth_manager_passwords.json
     depends_on:
       postgres:
         condition: service_healthy

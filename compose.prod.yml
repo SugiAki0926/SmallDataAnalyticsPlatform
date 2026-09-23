@@ -4,9 +4,7 @@ x-airflow-common: &airflow-common
     context: ./airflow
     dockerfile: Dockerfile
   image: dap-airflow:latest
-  env_file:
-    - .env
-  environment:
+  environment: &airflow-env
     TZ: ${TZ:-Asia/Tokyo}
     AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
@@ -15,9 +13,6 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: ${AIRFLOW__CORE__EXECUTION_API_SERVER_URL:-http://airflow-api-server:8080/execution/}
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
-    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
-    DAP_DOCKER_NETWORK: dap-prod # dap-dlt, dap-dbtがPostgreSQLとコンテナ間通信するために必要
-    DBT_TARGET: prod
   volumes:
     - dap_prod_airflow_logs:/opt/airflow/logs
   networks:
@@ -73,6 +68,15 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    environment:
+      <<: *airflow-env
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: ${AIRFLOW_UI_USER}:admin
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_PASSWORDS_FILE: /opt/airflow/simple_auth_manager_passwords.json
+    volumes:
+      # volumes を書くと共通設定が置き換わるため、ログ用 volume も繰り返す。
+      - dap_prod_airflow_logs:/opt/airflow/logs
+      # デプロイ前にホストへ {"<AIRFLOW_UI_USER>":"<password>"} を置く。
+      - ./secrets/airflow_ui_passwords.json:/opt/airflow/simple_auth_manager_passwords.json
     depends_on:
       postgres:
         condition: service_healthy
@@ -100,6 +104,19 @@ services:
     container_name: dap-prod-airflow-dag-processor
     command: [ "airflow", "dag-processor" ]
     restart: unless-stopped
+    # elt.py はパース時に os.environ を読む。パースするのはこのコンテナだけ。
+    environment:
+      <<: *airflow-env
+      DAP_DOCKER_NETWORK: dap-prod # dlt / dbt コンテナが PostgreSQL と通信するため
+      DBT_TARGET: prod
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      ANALYTICS_DB: ${ANALYTICS_DB}
+      SOURCE_DB: ${SOURCE_DB}
+      DLT_DB_USER: ${DLT_DB_USER}
+      DLT_DB_PASSWORD: ${DLT_DB_PASSWORD}
+      DBT_DB_USER: ${DBT_DB_USER}
+      DBT_DB_PASSWORD: ${DBT_DB_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
@@ -114,15 +131,18 @@ services:
     image: dap-source-ingestion:latest
     profiles:
       - job
-    env_file:
-      - .env
     environment:
       TZ: ${TZ:-Asia/Tokyo}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       SOURCE_DB: ${SOURCE_DB}
       SOURCE_DB_USER: ${SOURCE_DB_USER}
       SOURCE_DB_PASSWORD: ${SOURCE_DB_PASSWORD}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      OPENWEATHER_BASE_URL: ${OPENWEATHER_BASE_URL}
+      OPENWEATHER_CITY_ID: ${OPENWEATHER_CITY_ID}
+      OPENWEATHER_CITY_QUERY: ${OPENWEATHER_CITY_QUERY}
+      OPENWEATHER_FORECAST_CNT: ${OPENWEATHER_FORECAST_CNT:-8}
     networks:
       - dap-prod
     depends_on:
