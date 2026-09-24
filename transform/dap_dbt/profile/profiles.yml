@@ -1,5 +1,4 @@
-# ここではprofiles.ymlのサンプルファイルとして保存している
-# 本来は~/.dbt/profiles.ymlとして配置され、一般的な開発ではユーザーごとに分離される
+# ~/.dbt/profiles.ymlとして配置され、開発ではユーザーごとにスキーマを分離するのが一般的かも
 # DBT_SCHEMA=dev_XXX, # schema: "{{ env_var('dev_XXX', 'dev') }}"
 dap_dbt:
   target: dev

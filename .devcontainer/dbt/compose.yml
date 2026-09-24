@@ -13,6 +13,7 @@ services:
     environment:
       TZ: ${TZ:-Asia/Tokyo}
       # profiles.yml は transform/dap_dbt/profile/。cwd に依存しないよう絶対パスにする。
+      # 
       DBT_PROFILES_DIR: /workspaces/SmallDataAnalyticsPlatform/transform/dap_dbt/profile
     command: sleep infinity
     networks:
