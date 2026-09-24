@@ -13,7 +13,8 @@ sdap.excalidraw
 .netrc
 **/*.pem
 **/*.key
-secrets/
+secrets/*
+!secrets/airflow_ui_passwords.json.sample
 secrets.toml
 credentials.json
 service-account*.json

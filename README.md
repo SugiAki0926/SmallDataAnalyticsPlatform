@@ -9,39 +9,19 @@ Docker / Dev Containers で各コンポーネントを分離し、手元で確�
 ## データパイプラインとアーキテクチャ
 
 実行する環境がRaspberryPiということもあり、1つのPostgreSQLで3つのデータベースを管理しています。
-また、Ingestionの部分は、日々、データが蓄積される基幹システムを模しているため、Airflowでは管理していません。
+Ingestionの部分は、日々、データが蓄積される基幹システムを模しているため、Airflowでは管理していません。
+また、dbtで作成しているモデルも特に意図はなく、raw から marts までが生成されることを目的にしています。
+
+本プロジェクトは、データ分析基盤の仕組みを「小さく作って理解する」ことを目的とした学習用です。
+そのため、セキュリティや監視、詳細なログなど本番運用で必須となる機能は、簡易的な実装のみです。
 
 ![Small Data Analytics Platform](sdap.png)
 
-本プロジェクトは、データ分析基盤の仕組みを「小さく作って理解する」ことを目的とした学習用です。そのため、セキュリティや監視、詳細なログなど本番運用で必須となる機能は、簡易的な実装のみです。
+### Airflow Scheduler
 
-## 本番運用
+![airflow](airflow.png)
 
-### 起動と停止
+### SourceDBとMart
 
-基本的には、起動は **main への merge → GitHub Actions の runner → `deploy.sh`** です。
-Githubリポジトリへのシークレットの登録が必要です。ただ、手元のローカルPCで開発するには必須ではありません。
-変更は PR を merge し、次の deploy で反映します。
-
-```bash
-cd /opt/SmallDataAnalyticsPlatform
-docker compose -f compose.prod.yml up -d
-docker compose -f compose.prod.yml stop
-
-# log
-docker logs dap-prod-airflow-scheduler
-docker logs dap-prod-postgres
-cat /home/raspy/source-ingestion.log
-```
-
-各コンテナが正常に起動した後は、初回のみcronへのOpenWeather から Source DB への取り込みを設定します。
-そして、AirflowのUI画面から `elt` をONに変更します。起動時はOFFで設定しているため。
-
-```
-crontab -l
-0 * * * * cd /opt/SmallDataAnalyticsPlatform && /usr/bin/docker compose -f compose.prod.yml run --rm source-ingestion >> /home/raspy/source-ingestion.log 2>&1
-```
-
-毎時 0 分（JST）に天気データを取得し、ELT の DAG は毎時 5 分に実行されます。
-
-
+![table](table.png)
+※ 無料アカウントの場合、OpenWeather API は1時間ごとに更新されるわけではないため、左のSourceDBへは毎時0分でインサートされていますが、Martのテーブルは時間単位でGROUP BYしているため行数は一致していません。
