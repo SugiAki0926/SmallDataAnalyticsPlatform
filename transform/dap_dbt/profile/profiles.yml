@@ -1,5 +1,5 @@
 # ~/.dbt/profiles.ymlとして配置され、開発ではユーザーごとにスキーマを分離するのが一般的かも
-# DBT_SCHEMA=dev_XXX, # schema: "{{ env_var('dev_XXX', 'dev') }}"
+# schema: dev_{{ env_var('DBT_USER') }}として、DBT_USER=yournameとすれば、dev_yournameとなる
 dap_dbt:
   target: dev
   outputs:
